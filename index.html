@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HOYO-MiX 歌曲数据库查询</title>
+<meta name="description" content="HOYO-MiX 作品制作人员信息数据库在线查询">
+<link rel="stylesheet" href="vendor/tom-select.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-aura" aria-hidden="true"></div>
+
+<main class="page">
+
+  <header class="hero">
+    <div class="hero-top">
+      <h1>HOYO-MiX 作品制作人员查询</h1>
+      <a class="btn btn-ghost hero-link" href="stats.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 20V10M9.5 20V4.5M15 20v-7M20.5 20V8"/>
+        </svg>
+        数据统计
+      </a>
+    </div>
+    <div class="chips" id="meta-chips">
+      <span class="chip skeleton-chip"></span>
+      <span class="chip skeleton-chip"></span>
+      <span class="chip skeleton-chip"></span>
+    </div>
+  </header>
+
+  <section class="panel" aria-labelledby="filter-heading">
+    <div class="panel-head">
+      <h2 id="filter-heading">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 5.5h18M6.5 12h11M10 18.5h4"/>
+        </svg>
+        筛选条件
+      </h2>
+      <div class="panel-head-actions">
+        <button type="button" class="btn btn-ghost" id="btn-refresh" title="绕过浏览器缓存重新拉取数据">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 3.5V8h-4.5"/>
+          </svg>
+          刷新
+        </button>
+        <button type="button" class="btn btn-ghost" id="btn-reset">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 4l16 16M20 4L4 20"/>
+          </svg>
+          重置
+        </button>
+      </div>
+    </div>
+
+    <div id="filter-warnings" class="notice notice-warn" hidden></div>
+
+    <div class="filters" id="role-filters"></div>
+
+    <div class="extra-block">
+      <div class="filters filters-extra">
+        <div class="field">
+          <label for="f-extra-col">其他表头</label>
+          <select id="f-extra-col" placeholder="选择列名（可输入搜索）"></select>
+        </div>
+        <div class="field">
+          <label>该列的值</label>
+          <div id="extra-val-slot"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel panel-results" aria-labelledby="result-heading">
+    <div class="panel-head">
+      <h2 id="result-heading">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 9.5h17M9 9.5v10"/>
+        </svg>
+        查询结果
+      </h2>
+      <div class="panel-head-actions">
+        <button type="button" class="btn btn-primary" id="btn-csv">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3.5v11M8 11l4 4 4-4"/>
+            <path d="M4.5 17v2.5A1.5 1.5 0 0 0 6 21h12a1.5 1.5 0 0 0 1.5-1.5V17"/>
+          </svg>
+          导出 CSV
+        </button>
+      </div>
+    </div>
+
+    <div class="statbar">
+      <span class="stat-main" aria-live="polite" id="stat-count">—</span>
+      <span class="stat-sub" id="stat-sub"></span>
+    </div>
+
+    <div id="records"></div>
+
+    <div class="list-foot" id="list-foot" hidden>
+      <button type="button" class="btn btn-ghost" id="btn-more">加载更多</button>
+      <span class="foot-hint" id="foot-hint"></span>
+    </div>
+
+    <div class="empty" id="empty-state" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>
+      </svg>
+      <p>没有匹配的记录</p>
+    </div>
+  </section>
+</main>
+
+<div class="overlay" id="loading" role="status" aria-live="polite">
+  <div class="overlay-card">
+    <span class="spinner" aria-hidden="true"></span>
+    <p class="overlay-title" id="loading-title">正在加载数据</p>
+    <p class="overlay-sub" id="loading-sub">首次打开需要下载几 MB 数据，请稍候…</p>
+  </div>
+</div>
+
+<div class="overlay overlay-error" id="error-panel" hidden>
+  <div class="overlay-card">
+    <svg class="err-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 8.5v5M12 17h.01"/>
+      <path d="M10.3 3.9 2.6 17.4A1.9 1.9 0 0 0 4.3 20.3h15.4a1.9 1.9 0 0 0 1.7-2.9L13.7 3.9a1.9 1.9 0 0 0-3.4 0Z"/>
+    </svg>
+    <p class="overlay-title">数据加载失败</p>
+    <p class="overlay-sub" id="error-msg"></p>
+    <button type="button" class="btn btn-primary" id="btn-retry">重试</button>
+  </div>
+</div>
+
+<noscript>
+  <div class="overlay"><div class="overlay-card"><p class="overlay-title">需要启用 JavaScript</p></div></div>
+</noscript>
+
+<script src="vendor/tom-select.complete.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>数据统计与排名 · HOYO-MiX 歌曲数据库</title>
+<meta name="description" content="HOYO-MiX 作品数据库的实时统计与排名">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="stats.css">
+</head>
+<body>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-aura" aria-hidden="true"></div>
+
+<main class="page">
+
+  <header class="hero">
+    <div class="hero-top">
+      <h1>数据统计与排名</h1>
+      <a class="btn btn-ghost hero-link" href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M10 5l-7 7 7 7M3.5 12h17"/>
+        </svg>
+        返回查询
+      </a>
+    </div>
+    <div class="chips" id="meta-chips">
+      <span class="chip skeleton-chip"></span>
+      <span class="chip skeleton-chip"></span>
+      <span class="chip skeleton-chip"></span>
+    </div>
+  </header>
+
+  <!-- 单角色排行 -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 20V10M9.5 20V4.5M15 20v-7M20.5 20V8"/>
+        </svg>
+        角色排行
+      </h2>
+      <span class="head-note" id="role-note"></span>
+    </div>
+
+    <div class="role-tabs" id="role-tabs" role="tablist"></div>
+
+    <div class="chart" id="role-bars"></div>
+
+    <p class="chart-foot" id="role-foot"></p>
+  </section>
+
+  <!-- 跨角色 -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="9" cy="8" r="3.2"/><path d="M2.8 20c0-3.4 2.8-5.6 6.2-5.6s6.2 2.2 6.2 5.6"/>
+          <path d="M16 5.2a3.2 3.2 0 0 1 0 5.6M17.4 14.6c2.2.6 3.8 2.4 3.8 5.4"/>
+        </svg>
+        参与曲目最多 · Top 20
+      </h2>
+      <span class="head-note">跨全部角色去重，同一曲目只计 1 首</span>
+    </div>
+    <div class="chart" id="agg-bars"></div>
+  </section>
+
+  <!-- 分布 -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 20h16"/><rect x="5.5" y="11" width="3" height="6" rx="1"/>
+          <rect x="10.5" y="7" width="3" height="10" rx="1"/><rect x="15.5" y="13.5" width="3" height="3.5" rx="1"/>
+        </svg>
+        每首曲目的署名人数分布
+      </h2>
+      <span class="head-note" id="hist-note"></span>
+    </div>
+    <div class="hist" id="hist"></div>
+  </section>
+
+  <!-- 口径 -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8h.01"/>
+        </svg>
+        统计口径
+      </h2>
+    </div>
+    <ul class="caliber" id="caliber"></ul>
+  </section>
+</main>
+
+<div class="overlay" id="loading" role="status" aria-live="polite">
+  <div class="overlay-card">
+    <span class="spinner" aria-hidden="true"></span>
+    <p class="overlay-title" id="loading-title">正在统计</p>
+    <p class="overlay-sub" id="loading-sub">读取数据并计算排名…</p>
+  </div>
+</div>
+
+<div class="overlay overlay-error" id="error-panel" hidden>
+  <div class="overlay-card">
+    <svg class="err-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 8.5v5M12 17h.01"/>
+      <path d="M10.3 3.9 2.6 17.4A1.9 1.9 0 0 0 4.3 20.3h15.4a1.9 1.9 0 0 0 1.7-2.9L13.7 3.9a1.9 1.9 0 0 0-3.4 0Z"/>
+    </svg>
+    <p class="overlay-title">数据加载失败</p>
+    <p class="overlay-sub" id="error-msg"></p>
+    <a class="btn btn-primary" href="index.html">返回查询页</a>
+  </div>
+</div>
+
+<noscript>
+  <div class="overlay"><div class="overlay-card"><p class="overlay-title">需要启用 JavaScript</p></div></div>
+</noscript>
+
+<script src="stats.js"></script>
+</body>
+</html>
